@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}{{ alumno.nombre }} {{ alumno.apellido }} - Mi Sitio Web{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>Información del Alumno</h2>
+                <div class="btn-group">
+                    <a href="{{ url_for('editar_alumno', id=alumno.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <form method="POST" action="{{ url_for('eliminar_alumno', id=alumno.id) }}" 
+                          style="display: inline;" 
+                          onsubmit="return confirm('¿Estás seguro de eliminar este alumno?')">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if alumno.foto %}
+                <div class="row mb-4">
+                    <div class="col-12 text-center">
+                        <h5>Foto del Alumno</h5>
+                        <img src="{{ url_for('static', filename='uploads/' + alumno.foto) }}" 
+                             alt="Foto de {{ alumno.nombre }} {{ alumno.apellido }}" 
+                             class="img-fluid rounded shadow" 
+                             style="max-width: 300px; max-height: 400px; object-fit: cover;">
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Datos Personales</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>ID:</strong></td>
+                                <td>{{ alumno.id }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>RUT:</strong></td>
+                                <td><code class="fs-6">{{ alumno.rut }}</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nombre:</strong></td>
+                                <td>{{ alumno.nombre }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Apellido:</strong></td>
+                                <td>{{ alumno.apellido }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha de Nacimiento:</strong></td>
+                                <td>{{ alumno.fecha_nacimiento.strftime('%d de %B de %Y') }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Edad:</strong></td>
+                                <td>{{ alumno.edad }} años</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Información de Artes Marciales</h5>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Cinturón:</strong></td>
+                                <td>
+                                    <span class="badge fs-6 {% if alumno.cinturon == 'Blanco' %}badge-cinturon-blanco{% elif alumno.cinturon == 'Azul' %}badge-cinturon-azul{% elif alumno.cinturon == 'Morado' %}badge-cinturon-morado{% elif alumno.cinturon == 'Marron' %}badge-cinturon-marron{% elif alumno.cinturon == 'Negro' %}badge-cinturon-negro{% else %}badge-cinturon-default{% endif %}">
+                                        {{ alumno.cinturon }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nivel:</strong></td>
+                                <td>
+                                    <span class="badge bg-warning text-dark fs-6">
+                                        {% if alumno.nivel == 0 %}
+                                            Sin rayitas
+                                        {% elif alumno.nivel == 1 %}
+                                            {{ alumno.nivel }} rayita
+                                        {% else %}
+                                            {{ alumno.nivel }} rayitas
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cinturón Completo:</strong></td>
+                                <td><strong>{{ alumno.cinturon_completo }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fecha de Registro:</strong></td>
+                                <td>{{ alumno.fecha_registro.strftime('%d de %B de %Y') }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Hora de Registro:</strong></td>
+                                <td>{{ alumno.fecha_registro.strftime('%H:%M:%S') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('listar_alumnos') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
+                    </a>
+                    <div>
+                        <a href="{{ url_for('api_alumno', id=alumno.id) }}" class="btn btn-info" target="_blank">
+                            <i class="fas fa-code"></i> Ver JSON
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

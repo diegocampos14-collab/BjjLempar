@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Editar {{ alumno.nombre }} {{ alumno.apellido }} - Mi Sitio Web{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h2>Editar Alumno</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="rut" class="form-label">RUT *</label>
+                        <input type="text" class="form-control" id="rut" name="rut" 
+                               value="{{ alumno.rut }}"
+                               placeholder="12.345.678-9" 
+                               pattern="[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}"
+                               title="Formato: XX.XXX.XXX-X"
+                               required>
+                        <div class="form-text">Formato: XX.XXX.XXX-X (ej: 12.345.678-9)</div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   value="{{ alumno.nombre }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apellido" class="form-label">Apellido *</label>
+                            <input type="text" class="form-control" id="apellido" name="apellido" 
+                                   value="{{ alumno.apellido }}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento *</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                   value="{{ alumno.fecha_nacimiento.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cinturon" class="form-label">Cinturón *</label>
+                            <select class="form-select" id="cinturon" name="cinturon" required>
+                                <option value="">Selecciona un cinturón</option>
+                                <option value="Blanco" {{ 'selected' if alumno.cinturon == 'Blanco' }}>Blanco</option>
+                                <option value="Azul" {{ 'selected' if alumno.cinturon == 'Azul' }}>Azul</option>
+                                <option value="Morado" {{ 'selected' if alumno.cinturon == 'Morado' }}>Morado</option>
+                                <option value="Marron" {{ 'selected' if alumno.cinturon == 'Marron' }}>Marron</option>
+                                <option value="Negro" {{ 'selected' if alumno.cinturon == 'Negro' }}>Negro</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nivel" class="form-label">Nivel (Rayitas) *</label>
+                            <select class="form-select" id="nivel" name="nivel" required>
+                                <option value="">Selecciona el nivel</option>
+                                <option value="0" {{ 'selected' if alumno.nivel == 0 }}>Sin rayitas</option>
+                                <option value="1" {{ 'selected' if alumno.nivel == 1 }}>1 rayita</option>
+                                <option value="2" {{ 'selected' if alumno.nivel == 2 }}>2 rayitas</option>
+                                <option value="3" {{ 'selected' if alumno.nivel == 3 }}>3 rayitas</option>
+                                <option value="4" {{ 'selected' if alumno.nivel == 4 }}>4 rayitas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cinturón Completo</label>
+                            <div class="form-control-plaintext" id="cinturon_completo" style="background-color: #f8f9fa; border: 1px solid #ced4da; border-radius: 0.375rem; padding: 0.375rem 0.75rem; font-weight: bold;">
+                                {{ alumno.cinturon_completo }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="foto" class="form-label">Foto del Alumno</label>
+                        <input type="file" class="form-control" id="foto" name="foto" accept=".png,.jpg,.jpeg,.gif">
+                        <div class="form-text">Formatos permitidos: PNG, JPG, JPEG, GIF. Tamaño máximo: 16MB. Deja vacío para mantener la foto actual.</div>
+                        <div class="mt-2">
+                            {% if alumno.foto %}
+                                <div class="mb-2">
+                                    <strong>Foto actual:</strong><br>
+                                    <img src="{{ url_for('static', filename='uploads/' + alumno.foto) }}" alt="Foto actual" style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 2px solid #dee2e6;">
+                                </div>
+                            {% endif %}
+                            <img id="preview" src="#" alt="Vista previa" style="display: none; max-width: 200px; max-height: 200px; border-radius: 8px; border: 2px solid #dee2e6;">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <strong>Fecha de registro:</strong> {{ alumno.fecha_registro.strftime('%d/%m/%Y %H:%M:%S') }}
+                        </small>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('ver_alumno', id=alumno.id) }}" class="btn btn-secondary me-md-2">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Actualizar Alumno</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para actualizar el cinturón completo
+function actualizarCinturonCompleto() {
+    const cinturon = document.getElementById('cinturon').value;
+    const nivel = document.getElementById('nivel').value;
+    const display = document.getElementById('cinturon_completo');
+    
+    // Limpiar clases anteriores
+    display.className = 'form-control-plaintext';
+    
+    if (cinturon && nivel) {
+        const rayitas = nivel === '0' ? 'Sin rayitas' : 
+                       nivel === '1' ? '1 rayita' : `${nivel} rayitas`;
+        display.textContent = `${cinturon} - ${rayitas}`;
+        
+        // Agregar clase CSS correspondiente al cinturón
+        const claseCSS = getCSSClassCinturon(cinturon);
+        display.classList.add('badge', claseCSS);
+        display.style.fontWeight = 'bold';
+    } else {
+        display.textContent = 'Selecciona cinturón y nivel';
+        display.style.fontWeight = 'normal';
+        display.style.color = '#6c757d';
+        display.style.backgroundColor = '#f8f9fa';
+        display.style.border = '1px solid #ced4da';
+    }
+}
+
+// Función para obtener la clase CSS del cinturón
+function getCSSClassCinturon(cinturon) {
+    switch(cinturon) {
+        case 'Blanco': return 'badge-cinturon-blanco';
+        case 'Azul': return 'badge-cinturon-azul';
+        case 'Morado': return 'badge-cinturon-morado';
+        case 'Marron': return 'badge-cinturon-marron';
+        case 'Negro': return 'badge-cinturon-negro';
+        default: return 'badge-cinturon-default';
+    }
+}
+
+// Event listeners para actualizar cinturón completo
+document.getElementById('cinturon').addEventListener('change', actualizarCinturonCompleto);
+document.getElementById('nivel').addEventListener('change', actualizarCinturonCompleto);
+
+// Vista previa de imagen
+document.getElementById('foto').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('preview');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.style.display = 'none';
+    }
+});
+
+// Validación del formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    const nombre = document.getElementById('nombre').value.trim();
+    const apellido = document.getElementById('apellido').value.trim();
+    const fechaNacimiento = document.getElementById('fecha_nacimiento').value;
+    const cinturon = document.getElementById('cinturon').value;
+    const nivel = document.getElementById('nivel').value;
+    
+    if (!nombre || !apellido || !fechaNacimiento || !cinturon || !nivel) {
+        e.preventDefault();
+        alert('Por favor, completa todos los campos obligatorios.');
+        return false;
+    }
+    
+    // Validar que la fecha de nacimiento no sea futura
+    const fechaNac = new Date(fechaNacimiento);
+    const hoy = new Date();
+    
+    if (fechaNac > hoy) {
+        e.preventDefault();
+        alert('La fecha de nacimiento no puede ser futura.');
+        return false;
+    }
+    
+    // Validar edad mínima (3 años) y máxima (100 años)
+    const edad = hoy.getFullYear() - fechaNac.getFullYear();
+    if (edad < 3 || edad > 100) {
+        e.preventDefault();
+        alert('La edad debe estar entre 3 y 100 años.');
+        return false;
+    }
+});
+
+// Establecer fecha máxima (hoy) y mínima (100 años atrás)
+const fechaInput = document.getElementById('fecha_nacimiento');
+const hoy = new Date();
+const hace100Anos = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate());
+
+fechaInput.max = hoy.toISOString().split('T')[0];
+fechaInput.min = hace100Anos.toISOString().split('T')[0];
+</script>
+{% endblock %}

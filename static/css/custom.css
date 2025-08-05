@@ -1,0 +1,31 @@
+/* Estilos personalizados para badges de cinturones */
+.badge-cinturon-blanco {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+    border: 1px solid #ccc !important;
+}
+
+.badge-cinturon-azul {
+    background-color: #0000FF !important;
+    color: #FFFFFF !important;
+}
+
+.badge-cinturon-morado {
+    background-color: #800080 !important;
+    color: #FFFFFF !important;
+}
+
+.badge-cinturon-marron {
+    background-color: #8B4513 !important;
+    color: #FFFFFF !important;
+}
+
+.badge-cinturon-negro {
+    background-color: #000000 !important;
+    color: #FFFFFF !important;
+}
+
+.badge-cinturon-default {
+    background-color: #6c757d !important;
+    color: #FFFFFF !important;
+}

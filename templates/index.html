@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Mi Sitio Web{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Bienvenido, {{ current_user.username }}!</h1>
+            <p class="lead">Sistema de Gestión de Alumnos de Artes Marciales</p>
+            <hr class="my-4">
+            <p>Tu rol: <span class="badge badge-{% if current_user.is_admin() %}success{% else %}info{% endif %}">{{ current_user.role.title() }}</span></p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-primary btn-lg" href="{{ url_for('listar_alumnos') }}" role="button">
+                    <i class="fas fa-users"></i> Ver Alumnos
+                </a>
+                {% if current_user.is_admin() %}
+                    <a class="btn btn-success btn-lg" href="{{ url_for('crear_alumno') }}" role="button">
+                        <i class="fas fa-plus"></i> Crear Alumno
+                    </a>
+                    <a class="btn btn-warning btn-lg" href="{{ url_for('listar_usuarios') }}" role="button">
+                        <i class="fas fa-user-cog"></i> Gestionar Usuarios
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-fist-raised fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Gestión de Alumnos</h5>
+                <p class="card-text">{% if current_user.is_admin() %}Administra{% else %}Consulta{% endif %} información de estudiantes de artes marciales, incluyendo cinturones y progreso.</p>
+                <a href="{{ url_for('listar_alumnos') }}" class="btn btn-outline-primary">Ver Alumnos</a>
+            </div>
+        </div>
+    </div>
+    {% if current_user.is_admin() %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-users-cog fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Gestión de Usuarios</h5>
+                <p class="card-text">Administra usuarios del sistema, roles y permisos de acceso.</p>
+                <a href="{{ url_for('listar_usuarios') }}" class="btn btn-outline-warning">Gestionar Usuarios</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-database fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Base de Datos SQLite</h5>
+                <p class="card-text">Almacenamiento persistente y confiable usando SQLAlchemy ORM.</p>
+                <a href="{{ url_for('api_alumnos') }}" class="btn btn-outline-success" target="_blank">Ver API</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="fas fa-medal fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Sistema de Cinturones</h5>
+                <p class="card-text">Seguimiento del progreso de alumnos con sistema de cinturones por colores.</p>
+                <a href="{{ url_for('about') }}" class="btn btn-outline-info">Más Info</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

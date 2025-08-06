@@ -10,21 +10,24 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return """
+    port = os.environ.get('PORT', '5000')
+    env = os.environ.get('FLASK_ENV', 'development')
+    
+    return f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Sistema Alumnos - Funcionando</title>
         <style>
-            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-            .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-            .success { color: #28a745; }
-            .info { color: #17a2b8; background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+            body {{ font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }}
+            .container {{ background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
+            .success {{ color: #28a745; }}
+            .info {{ color: #17a2b8; background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }}
         </style>
     </head>
     <body>
         <div class="container">
-            <h1 class="success">🎉 ¡Aplicación Funcionando! v2</h1>
+            <h1 class="success">🎉 ¡Aplicación Funcionando! v3</h1>
             <p>Tu aplicación Flask está desplegada correctamente en Render.</p>
             
             <div class="info">
@@ -38,18 +41,15 @@ def home():
             </div>
             
             <h3>🔧 Información Técnica:</h3>
-            <p><strong>Puerto:</strong> {}</p>
-            <p><strong>Entorno:</strong> {}</p>
+            <p><strong>Puerto:</strong> {port}</p>
+            <p><strong>Entorno:</strong> {env}</p>
             
             <h3>🚀 Próximos Pasos:</h3>
             <p>Una vez confirmado que esta versión funciona, podemos restaurar la aplicación completa paso a paso.</p>
         </div>
     </body>
     </html>
-    """.format(
-        os.environ.get('PORT', '5000'),
-        os.environ.get('FLASK_ENV', 'development')
-    )
+    """
 
 @app.route('/health')
 def health():

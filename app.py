@@ -22,13 +22,19 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Configuración flexible de base de datos
 database_url = os.environ.get('DATABASE_URL')
-if not database_url:
+
+# Validar que DATABASE_URL sea una URL válida, no un hash
+if not database_url or not database_url.startswith(('sqlite://', 'postgresql://', 'postgres://')):
+    print(f'[WARNING] DATABASE_URL inválida o no configurada: {database_url}')
+    print('[INFO] Usando SQLite como fallback')
     # Fallback a SQLite para desarrollo local
     database_url = 'sqlite:///' + os.path.join(basedir, 'alumnos.db')
 
 # Render y otras plataformas usan postgres:// pero SQLAlchemy necesita postgresql://
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+print(f'[INFO] Usando base de datos: {database_url[:50]}...')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

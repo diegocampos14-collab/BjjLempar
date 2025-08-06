@@ -510,74 +510,64 @@ def api_alumno(id):
 def about():
     return render_template('about.html')
 
-@app.route('/fix-admin-rut')
-def fix_admin_rut():
-    """Ruta temporal para corregir el RUT del admin"""
-    admin_user = Usuario.query.filter_by(username='admin').first()
-    if admin_user:
-        old_rut = admin_user.rut
-        admin_user.rut = '00.000.000-0'  # RUT especial para admin
-        db.session.commit()
-        return f'RUT del admin actualizado de {old_rut} a {admin_user.rut}'
-    return 'Usuario admin no encontrado'
+# @app.route('/fix-admin-rut')
+# def fix_admin_rut():
+#     """Ruta temporal para corregir el RUT del admin"""
+#     admin_user = Usuario.query.filter_by(username='admin').first()
+#     if admin_user:
+#         old_rut = admin_user.rut
+#         admin_user.rut = '00.000.000-0'  # RUT especial para admin
+#         db.session.commit()
+#         return f'RUT del admin actualizado de {old_rut} a {admin_user.rut}'
+#     return 'Usuario admin no encontrado'
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         
         # Crear usuario administrador por defecto si no existe
-        admin_user = Usuario.query.filter_by(username='admin').first()
-        if not admin_user:
-            admin = Usuario(
-                rut='00.000.000-0',  # RUT especial para administrador (no válido para alumnos)
-                username='admin',
-                email='admin@lempar.com',
-                role='admin'
-            )
-            admin.set_password('admin123')  # Cambiar en producción
-            db.session.add(admin)
-            db.session.commit()
-            print('[OK] Usuario administrador creado:')
-            print('  Usuario: admin')
-            print('  Contrasena: admin123')
-            print('  [ADVERTENCIA] Cambia la contrasena en produccion')
+        try:
+            admin_user = Usuario.query.filter_by(username='admin').first()
+            if not admin_user:
+                admin = Usuario(
+                    rut='00.000.000-0',  # RUT especial para administrador (no válido para alumnos)
+                    username='admin',
+                    email='admin@lempar.com',
+                    role='admin'
+                )
+                admin.set_password('admin123')  # Cambiar en producción
+                db.session.add(admin)
+                db.session.commit()
+                print('[OK] Usuario administrador creado:')
+                print('  Usuario: admin')
+                print('  Contrasena: admin123')
+                print('  [ADVERTENCIA] Cambia la contrasena en produccion')
+            else:
+                print('[INFO] Usuario administrador ya existe')
+        except Exception as e:
+            print(f'[ERROR] Error al crear usuario admin: {e}')
+            db.session.rollback()
         
-        # Crear alumnos de prueba si no existen
-        if Alumno.query.count() == 0:
-            from datetime import date
-            alumnos_prueba = [
-                {
-                    'rut': '12.345.678-9',
-                    'nombre': 'Juan',
-                    'apellido': 'Pérez',
-                    'fecha_nacimiento': date(1995, 5, 15),
-                    'cinturon': 'Azul',
-                    'nivel': 2
-                },
-                {
-                    'rut': '98.765.432-1',
-                    'nombre': 'María',
-                    'apellido': 'González',
-                    'fecha_nacimiento': date(1990, 8, 22),
-                    'cinturon': 'Marrón',
-                    'nivel': 1
-                },
-                {
-                    'rut': '11.111.111-1',
-                    'nombre': 'Carlos',
-                    'apellido': 'Rodríguez',
-                    'fecha_nacimiento': date(1988, 12, 10),
-                    'cinturon': 'Negro',
-                    'nivel': 0
-                }
-            ]
-            
-            for alumno_data in alumnos_prueba:
-                alumno = Alumno(**alumno_data)
-                db.session.add(alumno)
-            
-            db.session.commit()
-            print('[OK] Alumnos de prueba creados.')
+        # Crear alumnos de prueba si no existen (comentado para evitar errores en producción)
+        # if Alumno.query.count() == 0:
+        #     from datetime import date
+        #     alumnos_prueba = [
+        #         {
+        #             'rut': '12.345.678-9',
+        #             'nombre': 'Juan',
+        #             'apellido': 'Pérez',
+        #             'fecha_nacimiento': date(1995, 5, 15),
+        #             'cinturon': 'Azul',
+        #             'nivel': 2
+        #         }
+        #     ]
+        #     
+        #     for alumno_data in alumnos_prueba:
+        #         alumno = Alumno(**alumno_data)
+        #         db.session.add(alumno)
+        #     
+        #     db.session.commit()
+        #     print('[OK] Alumnos de prueba creados.')
         
         # Mostrar información de usuarios existentes
         usuarios_existentes = Usuario.query.all()

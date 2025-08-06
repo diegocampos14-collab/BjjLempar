@@ -67,6 +67,34 @@ login_manager.login_view = 'login'
 login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
 
+# Inicializar base de datos automáticamente
+def init_database():
+    """Inicializar base de datos y crear usuario admin si no existe"""
+    try:
+        with app.app_context():
+            db.create_all()
+            
+            # Crear usuario administrador por defecto si no existe
+            admin_user = Usuario.query.filter_by(username='admin').first()
+            if not admin_user:
+                admin = Usuario(
+                    rut='00.000.000-0',
+                    username='admin',
+                    email='admin@lempar.com',
+                    role='admin'
+                )
+                admin.set_password('admin123')
+                db.session.add(admin)
+                db.session.commit()
+                print('[OK] Usuario administrador creado en producción')
+            else:
+                print('[INFO] Usuario administrador ya existe')
+    except Exception as e:
+        print(f'[ERROR] Error al inicializar base de datos: {e}')
+
+# Ejecutar inicialización automáticamente
+init_database()
+
 # Funciones auxiliares para manejo de archivos
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -517,16 +545,48 @@ def api_alumno(id):
 def about():
     return render_template('about.html')
 
-# @app.route('/fix-admin-rut')
-# def fix_admin_rut():
-#     """Ruta temporal para corregir el RUT del admin"""
-#     admin_user = Usuario.query.filter_by(username='admin').first()
-#     if admin_user:
-#         old_rut = admin_user.rut
-#         admin_user.rut = '00.000.000-0'  # RUT especial para admin
-#         db.session.commit()
-#         return f'RUT del admin actualizado de {old_rut} a {admin_user.rut}'
-#     return 'Usuario admin no encontrado'
+@app.route('/init-db')
+def init_db():
+    """Inicializar base de datos y crear usuario admin"""
+    try:
+        # Crear todas las tablas
+        db.create_all()
+        
+        # Crear usuario administrador por defecto si no existe
+        admin_user = Usuario.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin = Usuario(
+                rut='00.000.000-0',  # RUT especial para administrador
+                username='admin',
+                email='admin@lempar.com',
+                role='admin'
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            return '''
+            <h2>✅ Base de Datos Inicializada</h2>
+            <p><strong>Usuario administrador creado:</strong></p>
+            <ul>
+                <li>Usuario: admin</li>
+                <li>Contraseña: admin123</li>
+            </ul>
+            <p><a href="/login">Ir al Login</a></p>
+            <p><strong>ADVERTENCIA:</strong> Cambia la contraseña en producción</p>
+            '''
+        else:
+            return '''
+            <h2>ℹ️ Base de Datos Ya Inicializada</h2>
+            <p>El usuario administrador ya existe.</p>
+            <p><a href="/login">Ir al Login</a></p>
+            '''
+    except Exception as e:
+        db.session.rollback()
+        return f'''
+        <h2>❌ Error al Inicializar</h2>
+        <p>Error: {str(e)}</p>
+        <p><a href="/">Volver al inicio</a></p>
+        '''
 
 if __name__ == '__main__':
     with app.app_context():

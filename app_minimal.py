@@ -24,7 +24,7 @@ def home():
     </head>
     <body>
         <div class="container">
-            <h1 class="success">🎉 ¡Aplicación Funcionando!</h1>
+            <h1 class="success">🎉 ¡Aplicación Funcionando! v2</h1>
             <p>Tu aplicación Flask está desplegada correctamente en Render.</p>
             
             <div class="info">

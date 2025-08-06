@@ -1,0 +1,7 @@
+app.py
+app_debug.py
+*.pyc
+__pycache__/
+.env
+alumnos.db
+debug.db

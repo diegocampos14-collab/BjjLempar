@@ -30,9 +30,16 @@ if not database_url or not database_url.startswith(('sqlite://', 'postgresql://'
     # Fallback a SQLite para desarrollo local
     database_url = 'sqlite:///' + os.path.join(basedir, 'alumnos.db')
 
-# Render y otras plataformas usan postgres:// pero SQLAlchemy necesita postgresql://
-if database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+# Verificar si psycopg2 está disponible para PostgreSQL
+if database_url.startswith(('postgresql://', 'postgres://')):
+    try:
+        import psycopg2
+        # Render y otras plataformas usan postgres:// pero SQLAlchemy necesita postgresql://
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    except ImportError:
+        print('[WARNING] psycopg2 no disponible, usando SQLite como fallback')
+        database_url = 'sqlite:///' + os.path.join(basedir, 'alumnos.db')
 
 print(f'[INFO] Usando base de datos: {database_url[:50]}...')
 

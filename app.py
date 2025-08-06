@@ -67,33 +67,7 @@ login_manager.login_view = 'login'
 login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
 
-# Inicializar base de datos automáticamente
-def init_database():
-    """Inicializar base de datos y crear usuario admin si no existe"""
-    try:
-        with app.app_context():
-            db.create_all()
-            
-            # Crear usuario administrador por defecto si no existe
-            admin_user = Usuario.query.filter_by(username='admin').first()
-            if not admin_user:
-                admin = Usuario(
-                    rut='00.000.000-0',
-                    username='admin',
-                    email='admin@lempar.com',
-                    role='admin'
-                )
-                admin.set_password('admin123')
-                db.session.add(admin)
-                db.session.commit()
-                print('[OK] Usuario administrador creado en producción')
-            else:
-                print('[INFO] Usuario administrador ya existe')
-    except Exception as e:
-        print(f'[ERROR] Error al inicializar base de datos: {e}')
-
-# Ejecutar inicialización automáticamente
-init_database()
+# La inicialización se ejecutará al final del archivo después de definir los modelos
 
 # Funciones auxiliares para manejo de archivos
 def allowed_file(filename):
@@ -587,6 +561,29 @@ def init_db():
         <p>Error: {str(e)}</p>
         <p><a href="/">Volver al inicio</a></p>
         '''
+
+# Inicializar base de datos automáticamente al cargar la aplicación
+try:
+    with app.app_context():
+        db.create_all()
+        
+        # Crear usuario administrador por defecto si no existe
+        admin_user = Usuario.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin = Usuario(
+                rut='00.000.000-0',
+                username='admin',
+                email='admin@lempar.com',
+                role='admin'
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+            print('[OK] Usuario administrador creado en producción')
+        else:
+            print('[INFO] Usuario administrador ya existe')
+except Exception as e:
+    print(f'[ERROR] Error al inicializar base de datos: {e}')
 
 if __name__ == '__main__':
     with app.app_context():

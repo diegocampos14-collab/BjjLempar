@@ -202,6 +202,8 @@ class RegistroForm(FlaskForm):
     submit = SubmitField('Registrarse')
 
 class UsuarioForm(FlaskForm):
+    rut = StringField('RUT', validators=[DataRequired(), Length(min=9, max=12)], 
+                      render_kw={'placeholder': '12.345.678-9', 'pattern': r'[0-9]{1,2}\.[0-9]{3}\.[0-9]{3}-[0-9kK]{1}'})
     username = StringField('Usuario', validators=[DataRequired(), Length(min=3, max=80)])
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Contraseña', validators=[DataRequired(), Length(min=6)])
@@ -333,8 +335,15 @@ def crear_usuario():
             flash('El email ya está registrado.', 'error')
             return render_template('crear_usuario.html', form=form)
         
+        # Verificar si el RUT ya existe
+        existing_rut = Usuario.query.filter_by(rut=form.rut.data).first()
+        if existing_rut:
+            flash('El RUT ya está registrado.', 'error')
+            return render_template('crear_usuario.html', form=form)
+        
         # Crear nuevo usuario
         usuario = Usuario(
+            rut=form.rut.data,
             username=form.username.data,
             email=form.email.data,
             role=form.role.data

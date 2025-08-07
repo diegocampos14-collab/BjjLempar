@@ -37,6 +37,19 @@
                                 </div>
                             {% endif %}
                         </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            {{ form.rut.label(class="form-label") }}
+                            {{ form.rut(class="form-control") }}
+                            {% if form.rut.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.rut.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Formato: 12.345.678-9</small>
+                        </div>
                     </div>
                     
                     <div class="row">

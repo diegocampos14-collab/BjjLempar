@@ -28,11 +28,11 @@
                                 <i class="fas fa-graduation-cap"></i> Alumnos
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('listar_alumnos') }}">
+                                <li><a class="dropdown-item" href="{{ url_for('alumnos.listar_alumnos') }}">
                                     <i class="fas fa-list"></i> Ver Alumnos
                                 </a></li>
                                 {% if current_user.is_admin() %}
-                                    <li><a class="dropdown-item" href="{{ url_for('crear_alumno') }}">
+                                    <li><a class="dropdown-item" href="{{ url_for('alumnos.crear_alumno') }}">
                                         <i class="fas fa-plus"></i> Crear Alumno
                                     </a></li>
                                 {% endif %}
@@ -45,10 +45,10 @@
                                     <i class="fas fa-users"></i> Usuarios
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="{{ url_for('listar_usuarios') }}">
+                                    <li><a class="dropdown-item" href="{{ url_for('usuarios.listar_usuarios') }}">
                                         <i class="fas fa-list"></i> Ver Usuarios
                                     </a></li>
-                                    <li><a class="dropdown-item" href="{{ url_for('crear_usuario') }}">
+                                    <li><a class="dropdown-item" href="{{ url_for('usuarios.crear_usuario') }}">
                                         <i class="fas fa-user-plus"></i> Crear Usuario
                                     </a></li>
                                 </ul>
@@ -65,14 +65,14 @@
                                 {% endif %}
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('logout') }}">
+                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
                                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                                 </a></li>
                             </ul>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">
+                            <a class="nav-link" href="{{ url_for('auth.login') }}">
                                 <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                             </a>
                         </li>
